@@ -1,39 +1,45 @@
-const pool = require('../db/dbConfig');
 const TokenService = require('../services/tokenService');
 
 const tokenService = new TokenService();
 
 class TokenController {
   static async criaSenha(req, res) {
-    const { tipoSenha } = req.body;
+    const dto = req.body;
 
-    if (!tipoSenha) {
-      res.status(400).json({ mensagem: 'O tipo da senha não foi informado' });
-    }
+    if (!dto || !dto.tipoSenha) return res.status(400).json({ mensagem: 'O tipo da senha não foi informado' });
 
     try {
-      const { senha, idSenha } = await tokenService.criaSenha(tipoSenha);
+      const { senha, idSenha } = await tokenService.criaSenha(dto);
 
-      res.status(201).json({ mensagem: 'Senha criada com sucesso', data: { senha, idSenha } });
+      return res.status(201).json({ mensagem: 'Senha criada com sucesso', data: { senha, idSenha } });
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ mensagem: 'Erro ao criar a senha' });
+      return res.status(500).json({ mensagem: err.message });
+    }
+  }
+
+  static async buscaSenha(req, res) {
+    try {
+      const resultado = await tokenService.buscaSenha();
+
+      return res.status(200).json(resultado);
+    } catch (err) {
+      return res.status(500).json({ mensagem: err.message });
     }
   }
 
   static async cancelaSenha(req, res) {
-    const { senha } = req.body;
+    const dto = req.body;
 
-    const connection = await pool.getConnection();
+    if (Object.keys(dto).length === 0 || !dto.senha) {
+      return res.status(400).json({ mensagem: 'Senha não foi fornecida' });
+    }
 
     try {
-      const { verificaSenha } = await connection.query(`SELECT senha from senha where senha = ${senha}`);
+      await tokenService.cancelaSenha(dto);
 
-      console.log(verificaSenha);
-      return res.status(200).json({ mensagem: verificaSenha });
+      return res.status(200).json({ mensagem: 'Senha cancelada com sucesso' });
     } catch (err) {
-      console.error(err);
-      return res.status(500).json({ mensagem: 'Erro ao cancelar a senha' });
+      return res.status(500).json({ mensagem: err.message });
     }
   }
 }

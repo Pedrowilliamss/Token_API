@@ -2,7 +2,9 @@
 const pool = require('../db/dbConfig');
 
 class TokenService {
-  async criaSenha(tipoSenha) {
+  async criaSenha(dto) {
+    const { tipoSenha } = dto;
+
     const connection = await pool.getConnection();
     const dataAtual = new Date();
 
@@ -14,6 +16,7 @@ class TokenService {
     if (mes < 10) {
       mes = `0${mes}`;
     }
+
     const anoInteiro = dataAtual.getFullYear();
     const ano = anoInteiro.toString().slice(2);
 
@@ -50,12 +53,39 @@ class TokenService {
 
       await connection.commit();
 
-      return { status: 201, senha, idSenha };
+      return { senha, idSenha };
     } catch (err) {
       await connection.rollback();
-      return { status: 400, Error };
+      console.error(err);
+      throw new Error('Falha ao criar nova senha');
     } finally {
       if (connection) connection.release();
+    }
+  }
+
+  async buscaSenha() {
+    const connection = await pool.getConnection();
+
+    try {
+      const [rows] = await connection.query('SELECT id_senha,senha FROM senha WHERE ativo = 1');
+      return rows;
+    } catch (err) {
+      console.error(err);
+      throw new Error('Erro ao buscar senhas ativas');
+    } finally {
+      if (connection) connection.release();
+    }
+  }
+
+  async cancelaSenha(dto) {
+    const { senha } = dto;
+    const connection = await pool.getConnection();
+
+    try {
+      await connection.query(`UPDATE senha SET ativo = 0 where senha = "${senha}"`);
+    } catch (err) {
+      console.error(err);
+      throw new Error('Falha ao cancelar senha');
     }
   }
 }

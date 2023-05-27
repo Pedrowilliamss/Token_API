@@ -4,8 +4,8 @@ const TokenController = require('../controllers/tokenController');
 const router = Router();
 
 router
-  .get('/token')
+  .get('/token', TokenController.buscaSenha)
   .post('/token', TokenController.criaSenha)
-  .delete('/token');
+  .delete('/token', TokenController.cancelaSenha);
 
 module.exports = router;
