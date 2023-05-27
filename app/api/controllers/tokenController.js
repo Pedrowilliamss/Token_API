@@ -27,6 +27,20 @@ class TokenController {
     }
   }
 
+  static async buscaSenhaId(req, res) {
+    const dto = req.params;
+
+    if ((Object.keys(dto).length === 0) || !dto.id) return res.status(400).json({ mensagem: 'Id não foi fornecido' });
+
+    try {
+      const resultado = await tokenService.buscaSenhaId(dto);
+
+      return res.status(200).json(resultado);
+    } catch (err) {
+      return res.status(500).json({ mensagem: err.message });
+    }
+  }
+
   static async cancelaSenha(req, res) {
     const dto = req.body;
 

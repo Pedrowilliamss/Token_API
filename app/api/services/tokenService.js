@@ -77,6 +77,25 @@ class TokenService {
     }
   }
 
+  async buscaSenhaId(dto) {
+    const { id } = dto;
+
+    const connection = await pool.getConnection();
+
+    try {
+      const [resultado] = await connection.query(`SELECT senha, ativo FROM senha WHERE id_senha = ${id}`);
+
+      if (resultado[0].ativo === '0') return { mensagem: `A senha ${resultado[0].senha} está desabilitada` };
+
+      return { senha: resultado[0].senha };
+    } catch (err) {
+      console.error(err);
+      throw new Error('Falha ao buscar senha');
+    } finally {
+      if (connection) connection.release();
+    }
+  }
+
   async cancelaSenha(dto) {
     const { senha } = dto;
     const connection = await pool.getConnection();
