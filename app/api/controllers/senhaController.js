@@ -19,10 +19,11 @@ class SenhaController {
 
   static async buscaSenha(req, res) {
     const dto = req.body;
-    const { status, prioridade } = req.params;
+    const { status, prioridade, guiche } = req.query;
 
     if (status) dto.status = status;
     if (prioridade) dto.prioridade = prioridade;
+    if (guiche) dto.guiche = guiche;
 
     try {
       const { resultado, quantidadeResultado } = await senhaService.buscaSenha(dto);

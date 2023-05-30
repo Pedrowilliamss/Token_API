@@ -5,7 +5,7 @@ const router = Router();
 
 router
   .get('/senha', SenhaController.buscaSenha)
-  .get('/senha/ativa', SenhaController.buscaSenhaAtiva)
+  .get('/senha/fila', SenhaController.buscaSenhaAtiva)
   .get('/senha/id/:id', SenhaController.buscaSenhaId)
   .post('/senha', SenhaController.criaSenha)
   .delete('/senha/cancela/:id', SenhaController.cancelaSenha);

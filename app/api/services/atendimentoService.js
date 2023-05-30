@@ -47,6 +47,11 @@ class AtendimentoService {
       }
 
       if (senha.length === 0) {
+        [senha] = await connection.query(senhaQuery, [1]);
+        prioridadeAtual.setIdUltimaPrioridade(senha ? 1 : 2);
+      }
+
+      if (senha.length === 0) {
         await connection.query(atendimentoUpdate, [idGuiche]);
         connection.commit();
         throw new Error('Fila vazia');
@@ -58,9 +63,7 @@ class AtendimentoService {
 
       connection.commit();
 
-      console.log(guiche);
-
-      return { senha: senha[0].senha, guiche: guiche.descricao };
+      return { idSenha: senha[0].id_senha, senha: senha[0].senha, guiche: guiche[0].descricao };
     } catch (err) {
       await connection.rollback();
       console.error(err);
@@ -129,6 +132,8 @@ class AtendimentoService {
     } catch (err) {
       console.error(err);
       throw new Error('Falha ao cancelar atendimento');
+    } finally {
+      if (connection) connection.release();
     }
   }
 }

@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const senhaRouter = require('./senhaRouter');
 const atendimentoRouter = require('./atendimentoRouter');
 const guicheRouter = require('./guicheRouter');
+const relatorioRouter = require('./relatorioRouter');
 
 module.exports = app => {
   app.use(
@@ -12,5 +13,6 @@ module.exports = app => {
     senhaRouter,
     atendimentoRouter,
     guicheRouter,
+    relatorioRouter,
   );
 };

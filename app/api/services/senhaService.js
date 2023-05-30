@@ -9,6 +9,9 @@ class SenhaService {
     let quantidadeAtual;
     let errorMessage;
 
+    const prioridadeQuery = 'SELECT id_prioridade FROM prioridade WHERE prioridade = ?';
+    const senhaInsert = 'INSERT INTO senha VALUES (default, 1, ?, ?, default, null )';
+
     const connection = await pool.getConnection();
     const dataAtual = new Date();
 
@@ -27,7 +30,7 @@ class SenhaService {
     await connection.beginTransaction();
 
     try {
-      let [idPrioridade] = await connection.query(`SELECT id_prioridade FROM prioridade WHERE prioridade = "${tipoSenha}"`);
+      let [idPrioridade] = await connection.query(prioridadeQuery, [tipoSenha]);
 
       if (idPrioridade.length === 0) {
         errorMessage = `Tipo de senha ${tipoSenha} não reconhecida. Utilize: SG para senha geral, SP para senha preferêncial, SE para senha de exame`;
@@ -42,7 +45,7 @@ class SenhaService {
 
       const senha = `${ano}${mes}${dia}-${tipoSenha}${quantidadeAtual}`;
 
-      const [resultado] = await connection.query(`INSERT INTO senha VALUES (default, 1,${idPrioridade}, "${senha}", default, null )`);
+      const [resultado] = await connection.query(senhaInsert, [idPrioridade, senha]);
 
       const idSenha = resultado.insertId;
 
@@ -71,6 +74,7 @@ class SenhaService {
     const connection = await pool.getConnection();
 
     if (dto.status) condicoes.push(`status = "${dto.status}"`);
+    if (dto.prioridade) condicoes.push(`prioridade = "${dto.prioridade}"`);
     if (dto.guiche) condicoes.push(`guiche = "${dto.guiche}"`);
 
     if (condicoes.length > 0) {
@@ -81,6 +85,7 @@ class SenhaService {
       const [resultado] = await connection.query(query);
       const quantidadeResultado = resultado.length;
 
+      console.log(query);
       return { quantidadeResultado, resultado };
     } catch (err) {
       console.error(err);
@@ -91,12 +96,14 @@ class SenhaService {
   }
 
   async buscaSenhaAtiva() {
-    const query = 'SELECT id_senha,senha FROM senha WHERE id_status = 2';
+    const query = 'SELECT id_senha,senha FROM senha WHERE id_status = 1';
     const connection = await pool.getConnection();
 
     try {
       const [resultado] = await connection.query(query);
       const quantidadeResultado = resultado.length;
+
+      console.log(query);
       return { resultado, quantidadeResultado };
     } catch (err) {
       console.error(err);
@@ -108,16 +115,18 @@ class SenhaService {
 
   async buscaSenhaId(dto) {
     const { id } = dto;
+    const query = 'SELECT senha, id_status FROM senha WHERE id_senha = ?';
 
     const connection = await pool.getConnection();
 
     try {
-      const [resultado] = await connection.query(`SELECT senha, id_status FROM senha WHERE id_senha = ${id}`);
+      const [resultado] = await connection.query(query, [id]);
 
       if (resultado.length === 0) throw new Error(`Não existe uma senha com o id ${id}`);
 
       if (resultado[0].id_status === '4') return { mensagem: `A senha ${resultado[0].senha} está cancelada` };
 
+      console.log(query);
       return { senha: resultado[0].senha };
     } catch (err) {
       console.error(err);
@@ -137,6 +146,8 @@ class SenhaService {
     } catch (err) {
       console.error(err);
       throw new Error('Falha ao cancelar senha');
+    } finally {
+      if (connection) connection.release();
     }
   }
 }

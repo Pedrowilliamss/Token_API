@@ -63,6 +63,8 @@ class GuicheService {
     } catch (err) {
       console.error(err);
       throw new Error('Falha ao cancelar atendimento');
+    } finally {
+      if (connection) connection.release();
     }
   }
 }
