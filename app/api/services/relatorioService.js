@@ -12,8 +12,6 @@ class RelatorioService {
       const [resultado] = await connection.query(query);
       const quantidadeResultado = resultado.length;
 
-      console.log(resultado);
-
       return { quantidadeResultado, resultado };
     } catch (err) {
       console.error(err);
