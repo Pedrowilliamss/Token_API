@@ -1,4 +1,6 @@
-let quantidadeAtualPrioridade = 1, quantidadeAtualGeral = 1, quantidadeAtualExame = 1;
+let quantidadeAtualPrioridade = 1;
+let quantidadeAtualGeral = 1;
+let quantidadeAtualExame = 1;
 
 module.exports = {
   getQuantidadeAtual: (tipoSenha) => {

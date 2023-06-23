@@ -12,6 +12,12 @@
     },
     "rules": {
         "no-console": "off",
-        "linebreak-style": "off"
+        "linebreak-style": "off",
+        "strict": "off",
+        "lines-around-directive": "off",
+        "no-unused-vars": "off",
+        "import/no-dynamic-require": "off",
+        "global-require": "off",
+        "import/no-extraneous-dependencies": "off"
     }
 }
