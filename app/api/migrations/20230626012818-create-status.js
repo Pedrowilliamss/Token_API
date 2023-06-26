@@ -2,31 +2,31 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('prioridades', {
+    await queryInterface.createTable('status', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      prioridade: {
-        type: Sequelize.STRING(2),
+      nome: {
+        type: Sequelize.STRING(45),
         allowNull: false,
         validate: {
-          len: [1, 2],
+          len: [1, 45],
         },
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('prioridades');
+    await queryInterface.dropTable('status');
   },
 };

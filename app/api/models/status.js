@@ -4,29 +4,33 @@ const {
 } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class prioridade extends Model {
+  class status extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      prioridade.hasMany(models.senha, {
-        foreignKey: 'id_prioridade',
+      status.hasMany(models.senha, {
+        foreignKey: 'id_status',
+      });
+      status.hasMany(models.atendimento, {
+        foreignKey: 'id_status',
       });
     }
   }
-  prioridade.init({
-    prioridade: {
-      type: DataTypes.STRING(2),
+  status.init({
+    nome: {
+      type: DataTypes.STRING(45),
       validate: {
-        len: [1, 2],
+        len: [1, 45],
       },
     },
   }, {
     sequelize,
-    modelName: 'prioridade',
-    tableName: 'prioridades',
+    modelName: 'status',
+    tableName: 'status',
+    underscored: true,
   });
-  return prioridade;
+  return status;
 };
