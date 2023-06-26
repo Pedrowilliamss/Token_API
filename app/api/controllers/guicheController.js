@@ -5,9 +5,9 @@ const guicheService = new GuicheService();
 class GuicherController {
   static async buscaGuiche(req, res) {
     try {
-      const { resultado, quantidadeResultado } = await guicheService.buscaGuiche();
+      const { resultado } = await guicheService.buscaGuiche();
 
-      return res.status(200).json({ qtd_resultado: quantidadeResultado, data: resultado });
+      return res.status(200).json({ data: resultado });
     } catch (err) {
       return res.status(500).json({ mensagem: err.message });
     }

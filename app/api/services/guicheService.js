@@ -1,21 +1,16 @@
 /* eslint-disable max-len */
 /* eslint-disable class-methods-use-this */
 const pool = require('../db/dbConfig');
+const database = require('../models');
 
 class GuicheService {
   async buscaGuiche() {
-    const connection = await pool.getConnection();
-    const query = 'SELECT * FROM guiche';
     try {
-      const [resultado] = await connection.query(query);
-      const quantidadeResultado = resultado.length;
-
-      return { resultado, quantidadeResultado };
+      const resultado = await database.guiche.findAll();
+      return { resultado };
     } catch (err) {
       console.error(err);
       throw new Error('Falha ao buscar guiche');
-    } finally {
-      if (connection) connection.release();
     }
   }
 

@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "migrate": "npx sequelize-cli db:migrate",
+    "seed": "npx sequelize-cli db:seed:all",
     "start": "nodemon api/app.js"
   },
   "keywords": [],
